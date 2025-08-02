@@ -9,7 +9,7 @@ interface MessageInputProps {
 export default function MessageInput({ onSendMessage, isLoading }: MessageInputProps) {
   const [message, setMessage] = useState('')
   const inputRef = useRef<HTMLTextAreaElement>(null)
-  const { hapticFeedback } = useTelegram()
+  const { haptic } = useTelegram()
 
   const handleSend = () => {
     if (message.trim() && !isLoading) {
@@ -41,7 +41,7 @@ export default function MessageInput({ onSendMessage, isLoading }: MessageInputP
         />
         <button
           onClick={() => {
-            hapticFeedback?.impactOccurred('light')
+            haptic?.impactOccurred('light')
             handleSend()
           }}
           disabled={!message.trim() || isLoading}

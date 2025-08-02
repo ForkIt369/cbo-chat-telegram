@@ -96,7 +96,7 @@ export class CBOBroMCPClient {
 
   async connect() {
     // TODO: Implement MCP connection
-    console.log('MCP connection stub - ready for implementation')
+    console.log('MCP connection stub - ready for implementation', this.mcpEndpoint)
   }
 
   async sendMessage(message: string, context?: any) {

@@ -5,7 +5,7 @@ import MessageInput from './MessageInput'
 import { Message, sendMessageToCBOBro } from '../services/cbo-bro'
 
 export default function ChatInterface() {
-  const { user, hapticFeedback } = useTelegram()
+  const { user, haptic } = useTelegram()
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -36,7 +36,7 @@ export default function ChatInterface() {
       timestamp: new Date(),
     }
     setMessages(prev => [...prev, userMessage])
-    hapticFeedback?.impactOccurred('light')
+    haptic?.impactOccurred('light')
 
     // Show typing indicator
     setIsLoading(true)
@@ -51,7 +51,7 @@ export default function ChatInterface() {
 
     try {
       // Send to CBO-Bro agent
-      const response = await sendMessageToCBOBro(text, user)
+      const response = await sendMessageToCBOBro(text, user || undefined)
       
       // Remove typing indicator and add response
       setMessages(prev => {
@@ -63,7 +63,7 @@ export default function ChatInterface() {
           timestamp: new Date(),
         }]
       })
-      hapticFeedback?.notificationOccurred('success')
+      haptic?.notificationOccurred('success')
     } catch (error) {
       // Remove typing indicator and show error
       setMessages(prev => {
@@ -76,7 +76,7 @@ export default function ChatInterface() {
           isError: true,
         }]
       })
-      hapticFeedback?.notificationOccurred('error')
+      haptic?.notificationOccurred('error')
     } finally {
       setIsLoading(false)
     }

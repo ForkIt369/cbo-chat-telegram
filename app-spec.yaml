@@ -1,0 +1,27 @@
+name: cbo-chat-telegram
+region: nyc
+static_sites:
+- build_command: npm install && npm run build
+  environment_slug: node-js
+  github:
+    repo: ForkIt369/cbo-chat-telegram
+    branch: master
+    deploy_on_push: true
+  name: cbo-chat
+  output_dir: dist
+  routes:
+  - path: /
+  envs:
+  - key: VITE_TELEGRAM_BOT_TOKEN
+    value: "8275866763:AAEeFQNjC9uthynGxBXjShbWxxvVi99L9-I"
+    type: SECRET
+  - key: VITE_TELEGRAM_BOT_USERNAME
+    value: "cbo_chat_bot"
+  - key: VITE_WEBAPP_URL
+    value: "https://cbo-chat-telegram.ondigitalocean.app"
+  - key: VITE_AGENT_ENDPOINT
+    value: "https://api.cbo-chat.com/agent"
+domains:
+- domain: cbo-chat.broquests.com
+  type: PRIMARY
+  zone: broquests.com
