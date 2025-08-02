@@ -1,13 +1,22 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTelegram } from '../hooks/useTelegram'
 import { useConvexSession } from '../hooks/useConvexSession'
+import { useConvexMock } from '../hooks/useConvexMock'
 import MessageList from './MessageList'
 import MessageInput from './MessageInput'
 import { Message, sendMessageToCBOBro } from '../services/cbo-bro'
 
 export default function ChatInterface() {
   const { user, haptic } = useTelegram()
-  const { saveMessage, userInsights } = useConvexSession(user)
+  
+  // Check if Convex is available
+  const isConvexAvailable = !!import.meta.env.VITE_CONVEX_URL
+  
+  // Use either real Convex or mock
+  const convexHook = isConvexAvailable ? useConvexSession : useConvexMock
+  const { saveMessage, userInsights } = convexHook(user)
+  
+  console.log('[ChatInterface] Using Convex:', isConvexAvailable)
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',

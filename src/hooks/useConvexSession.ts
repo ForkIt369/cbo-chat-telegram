@@ -3,30 +3,52 @@ import { api } from "../../convex/_generated/api";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 
+// Mock implementations for when Convex is not available
+const mockUseMutation = () => {
+  return async (...args: any[]) => {
+    console.log('[Convex Mock] Mutation called:', args);
+    return null;
+  };
+};
+
+const mockUseQuery = () => {
+  return undefined;
+};
+
 export function useConvexSession(telegramUser: any) {
   const [sessionId] = useState(() => uuidv4());
   const [userId, setUserId] = useState<string | null>(null);
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [isConvexEnabled] = useState(() => {
+    // Check if Convex is properly configured
+    return !!import.meta.env.VITE_CONVEX_URL;
+  });
 
-  const getOrCreateUser = useMutation(api.users.getOrCreateUser);
-  const createConversation = useMutation(api.conversations.createConversation);
-  const addMessage = useMutation(api.conversations.addMessage);
-  const updateConversation = useMutation(api.conversations.updateConversation);
+  // Use mock functions if Convex is not available
+  const getOrCreateUser = isConvexEnabled ? useMutation(api.users.getOrCreateUser) : mockUseMutation();
+  const createConversation = isConvexEnabled ? useMutation(api.conversations.createConversation) : mockUseMutation();
+  const addMessage = isConvexEnabled ? useMutation(api.conversations.addMessage) : mockUseMutation();
+  const updateConversation = isConvexEnabled ? useMutation(api.conversations.updateConversation) : mockUseMutation();
   
-  const activeConversation = useQuery(
+  // Only query if Convex is enabled and we have a sessionId
+  const activeConversation = isConvexEnabled ? useQuery(
     api.conversations.getActiveConversation,
     sessionId ? { sessionId } : "skip"
-  );
+  ) : mockUseQuery();
 
-  const userInsights = useQuery(
+  // Only query if Convex is enabled and we have a userId
+  const userInsights = isConvexEnabled ? useQuery(
     api.users.getUserInsightsSummary,
     userId ? { userId: userId as any } : "skip"
-  );
+  ) : mockUseQuery();
 
   // Initialize user and conversation
   useEffect(() => {
     async function initializeSession() {
-      if (!telegramUser) return;
+      if (!telegramUser || !isConvexEnabled) {
+        console.log('[Convex] Skipping initialization:', { telegramUser: !!telegramUser, isConvexEnabled });
+        return;
+      }
 
       try {
         // Get or create user
@@ -50,16 +72,20 @@ export function useConvexSession(telegramUser: any) {
           setConversationId(activeConversation._id);
         }
       } catch (error) {
-        console.error("Error initializing session:", error);
+        console.error("[Convex] Error initializing session:", error);
+        // Don't throw - let the app continue without Convex
       }
     }
 
     initializeSession();
-  }, [telegramUser, activeConversation]);
+  }, [telegramUser, activeConversation, isConvexEnabled]);
 
   // Function to save a message
   const saveMessage = async (role: "user" | "assistant", content: string) => {
-    if (!conversationId || !userId) return;
+    if (!conversationId || !userId || !isConvexEnabled) {
+      console.log('[Convex] Skipping message save:', { conversationId: !!conversationId, userId: !!userId, isConvexEnabled });
+      return;
+    }
 
     try {
       // Extract keywords and flow mentions

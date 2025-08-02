@@ -21,6 +21,8 @@ static_sites:
     value: "https://cbo-chat-telegram.ondigitalocean.app"
   - key: VITE_AGENT_ENDPOINT
     value: "https://api.cbo-chat.com/agent"
+  - key: VITE_CONVEX_URL
+    value: "https://artful-ibis-284.convex.cloud"
 domains:
 - domain: cbo-chat.broquests.com
   type: PRIMARY
