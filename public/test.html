@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>CBO Chat Test</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0A0E0A;
+            color: #E5E7E5;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .status {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+            background: #1A1F1A;
+            border: 1px solid #2A352A;
+        }
+        .success { border-color: #30D158; }
+        .error { border-color: #FF3B30; }
+        .info { border-color: #007AFF; }
+        pre {
+            background: #111511;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        button {
+            background: #30D158;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CBO Chat - Debug Test</h1>
+        
+        <div id="telegram-status" class="status">
+            <h3>Telegram WebApp Status</h3>
+            <p>Checking...</p>
+        </div>
+
+        <div id="environment" class="status">
+            <h3>Environment</h3>
+            <pre id="env-data">Loading...</pre>
+        </div>
+
+        <div id="user-info" class="status">
+            <h3>User Information</h3>
+            <pre id="user-data">Loading...</pre>
+        </div>
+
+        <div id="actions" class="status">
+            <h3>Test Actions</h3>
+            <button onclick="testExpand()">Expand Window</button>
+            <button onclick="testHaptic()">Test Haptic</button>
+            <button onclick="testMainButton()">Show Main Button</button>
+            <button onclick="openMainApp()">Open Main App</button>
+        </div>
+
+        <div id="errors" class="status error" style="display: none;">
+            <h3>Errors</h3>
+            <pre id="error-log"></pre>
+        </div>
+    </div>
+
+    <script>
+        const logError = (msg) => {
+            const errorDiv = document.getElementById('errors');
+            const errorLog = document.getElementById('error-log');
+            errorDiv.style.display = 'block';
+            errorLog.textContent += msg + '\n';
+        };
+
+        // Check Telegram WebApp
+        const checkTelegram = () => {
+            const statusDiv = document.getElementById('telegram-status');
+            const statusContent = statusDiv.querySelector('p');
+            
+            try {
+                if (typeof window.Telegram === 'undefined') {
+                    statusContent.innerHTML = '❌ Telegram object not found';
+                    statusDiv.classList.add('error');
+                    logError('window.Telegram is undefined');
+                    return;
+                }
+
+                if (typeof window.Telegram.WebApp === 'undefined') {
+                    statusContent.innerHTML = '❌ Telegram.WebApp not found';
+                    statusDiv.classList.add('error');
+                    logError('window.Telegram.WebApp is undefined');
+                    return;
+                }
+
+                const tg = window.Telegram.WebApp;
+                statusContent.innerHTML = `
+                    ✅ Telegram WebApp loaded<br>
+                    Version: ${tg.version}<br>
+                    Platform: ${tg.platform}<br>
+                    Color Scheme: ${tg.colorScheme}<br>
+                    Expanded: ${tg.isExpanded}<br>
+                    View Height: ${tg.viewportHeight}<br>
+                    View Stable Height: ${tg.viewportStableHeight}
+                `;
+                statusDiv.classList.add('success');
+
+                // Initialize
+                tg.ready();
+                
+            } catch (e) {
+                statusContent.innerHTML = '❌ Error checking Telegram';
+                statusDiv.classList.add('error');
+                logError('Error: ' + e.message);
+            }
+        };
+
+        // Check environment
+        const checkEnvironment = () => {
+            const envData = document.getElementById('env-data');
+            const env = {
+                'User Agent': navigator.userAgent,
+                'Window Size': `${window.innerWidth} x ${window.innerHeight}`,
+                'Location': window.location.href,
+                'Protocol': window.location.protocol,
+                'Is Telegram': window.Telegram ? 'Yes' : 'No',
+                'Is Mobile': /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 'Yes' : 'No'
+            };
+            envData.textContent = JSON.stringify(env, null, 2);
+        };
+
+        // Check user info
+        const checkUser = () => {
+            const userData = document.getElementById('user-data');
+            try {
+                if (window.Telegram?.WebApp?.initDataUnsafe) {
+                    const initData = window.Telegram.WebApp.initDataUnsafe;
+                    userData.textContent = JSON.stringify(initData, null, 2);
+                } else {
+                    userData.textContent = 'No user data available (not opened in Telegram)';
+                }
+            } catch (e) {
+                userData.textContent = 'Error getting user data: ' + e.message;
+                logError('User data error: ' + e.message);
+            }
+        };
+
+        // Test functions
+        window.testExpand = () => {
+            try {
+                window.Telegram.WebApp.expand();
+                alert('Window expanded');
+            } catch (e) {
+                alert('Error: ' + e.message);
+                logError('Expand error: ' + e.message);
+            }
+        };
+
+        window.testHaptic = () => {
+            try {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+                alert('Haptic feedback sent');
+            } catch (e) {
+                alert('Error: ' + e.message);
+                logError('Haptic error: ' + e.message);
+            }
+        };
+
+        window.testMainButton = () => {
+            try {
+                const mb = window.Telegram.WebApp.MainButton;
+                mb.text = 'Test Button';
+                mb.show();
+                mb.onClick(() => alert('Main button clicked!'));
+            } catch (e) {
+                alert('Error: ' + e.message);
+                logError('Main button error: ' + e.message);
+            }
+        };
+
+        window.openMainApp = () => {
+            window.location.href = '/';
+        };
+
+        // Error handling
+        window.addEventListener('error', (e) => {
+            logError(`Global error: ${e.message} at ${e.filename}:${e.lineno}:${e.colno}`);
+        });
+
+        // Run checks
+        checkTelegram();
+        checkEnvironment();
+        checkUser();
+
+        // Check after delay
+        setTimeout(() => {
+            if (!window.Telegram?.WebApp) {
+                logError('Telegram WebApp still not available after 2 seconds');
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
