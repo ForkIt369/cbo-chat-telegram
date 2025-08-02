@@ -1,4 +1,3 @@
-import { api } from "../../convex/_generated/api";
 import { ConvexReactClient } from "convex/react";
 
 export interface RagInsight {
@@ -11,14 +10,15 @@ export interface RagInsight {
 
 // Service for generating personalized insights using RAG
 export class RagInsightsService {
-  private convexClient: ConvexReactClient;
-
+  // @ts-ignore - Will be used when database queries are implemented
+  private convexClient: ConvexReactClient
+  
   constructor(convexClient: ConvexReactClient) {
-    this.convexClient = convexClient;
+    this.convexClient = convexClient
   }
 
   // Analyze message for business insights
-  async analyzeMessage(message: string, userId: string): Promise<RagInsight[]> {
+  async analyzeMessage(message: string, _userId: string): Promise<RagInsight[]> {
     const insights: RagInsight[] = [];
 
     // Pattern detection
@@ -103,7 +103,7 @@ export class RagInsightsService {
   }
 
   // Get personalized recommendations based on history
-  async getPersonalizedRecommendations(userId: string): Promise<RagInsight[]> {
+  async getPersonalizedRecommendations(_userId: string): Promise<RagInsight[]> {
     // In production, this would query the vector database for similar patterns
     // and provide contextual recommendations based on user's history
     

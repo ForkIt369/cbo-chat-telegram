@@ -1,5 +1,4 @@
 import { sendToAnthropic, AnthropicMessage } from './anthropic'
-import { extractBusinessMetrics } from './rag-insights'
 
 export interface Message {
   id: string
