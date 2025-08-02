@@ -1,4 +1,5 @@
 import { sendToAnthropic, AnthropicMessage } from './anthropic'
+import { extractBusinessMetrics } from './rag-insights'
 
 export interface Message {
   id: string
@@ -7,6 +8,7 @@ export interface Message {
   timestamp: Date
   isTyping?: boolean
   isError?: boolean
+  insights?: Array<{type: string, content: string}>
 }
 
 export interface User {

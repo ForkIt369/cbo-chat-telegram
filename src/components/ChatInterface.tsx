@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTelegram } from '../hooks/useTelegram'
+import { useConvexSession } from '../hooks/useConvexSession'
 import MessageList from './MessageList'
 import MessageInput from './MessageInput'
 import { Message, sendMessageToCBOBro } from '../services/cbo-bro'
 
 export default function ChatInterface() {
   const { user, haptic } = useTelegram()
+  const { saveMessage, userInsights } = useConvexSession(user)
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -50,8 +52,14 @@ export default function ChatInterface() {
     setMessages(prev => [...prev, typingMessage])
 
     try {
+      // Save user message to Convex
+      await saveMessage('user', text)
+      
       // Send to CBO-Bro agent
       const response = await sendMessageToCBOBro(text, user || undefined)
+      
+      // Save bot response to Convex
+      await saveMessage('assistant', response)
       
       // Remove typing indicator and add response
       setMessages(prev => {
@@ -85,8 +93,22 @@ export default function ChatInterface() {
   return (
     <div className="flex flex-col h-screen bg-telegram-bg">
       <header className="bg-telegram-secondary-bg px-4 py-3 shadow-sm">
-        <h1 className="text-lg font-semibold text-telegram-text">CBO Bro Chat</h1>
-        <p className="text-xs text-telegram-hint">Business optimization at your fingertips</p>
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-lg font-semibold text-telegram-text">CBO Bro Chat</h1>
+            <p className="text-xs text-telegram-hint">Business optimization at your fingertips</p>
+          </div>
+          {userInsights && (
+            <div className="text-right">
+              <p className="text-xs text-telegram-hint">
+                {userInsights.activeInsights} active insights
+              </p>
+              <p className="text-xs text-telegram-accent">
+                {userInsights.completedChallenges} resolved
+              </p>
+            </div>
+          )}
+        </div>
       </header>
       
       <MessageList messages={messages} />
