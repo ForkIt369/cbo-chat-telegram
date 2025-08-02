@@ -1,0 +1,72 @@
+/* CBO Chat App Styles */
+
+/* Telegram theme colors */
+:root {
+  --telegram-bg: var(--tg-theme-bg-color, #ffffff);
+  --telegram-secondary-bg: var(--tg-theme-secondary-bg-color, #f1f1f1);
+  --telegram-text: var(--tg-theme-text-color, #000000);
+  --telegram-hint: var(--tg-theme-hint-color, #999999);
+  --telegram-link: var(--tg-theme-link-color, #2481cc);
+  --telegram-button: var(--tg-theme-button-color, #2481cc);
+  --telegram-button-text: var(--tg-theme-button-text-color, #ffffff);
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --telegram-bg: var(--tg-theme-bg-color, #1a1a1a);
+    --telegram-secondary-bg: var(--tg-theme-secondary-bg-color, #2a2a2a);
+    --telegram-text: var(--tg-theme-text-color, #ffffff);
+    --telegram-hint: var(--tg-theme-hint-color, #666666);
+    --telegram-link: var(--tg-theme-link-color, #4a9eff);
+    --telegram-button: var(--tg-theme-button-color, #4a9eff);
+    --telegram-button-text: var(--tg-theme-button-text-color, #ffffff);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--telegram-hint);
+  border-radius: 3px;
+  opacity: 0.5;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  opacity: 0.7;
+}
+
+/* Message animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-item {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Typing indicator animation */
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+}
