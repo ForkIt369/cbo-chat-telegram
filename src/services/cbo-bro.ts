@@ -1,3 +1,5 @@
+import { sendToAnthropic, AnthropicMessage } from './anthropic'
+
 export interface Message {
   id: string
   text: string
@@ -14,13 +16,55 @@ export interface User {
   username?: string
 }
 
-// CBO-Bro Agent API stub - ready for MCP integration
-export async function sendMessageToCBOBro(message: string, user?: User): Promise<string> {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000))
+// Store conversation history in memory (in production, use a database)
+const conversationHistories = new Map<number, AnthropicMessage[]>()
 
-  // For now, return mock responses based on keywords
-  // This will be replaced with actual MCP integration
+// CBO-Bro Agent API using Anthropic Claude Sonnet 4
+export async function sendMessageToCBOBro(message: string, user?: User): Promise<string> {
+  const userId = user?.id || 0
+  
+  // Get or create conversation history for this user
+  if (!conversationHistories.has(userId)) {
+    conversationHistories.set(userId, [])
+  }
+  
+  const history = conversationHistories.get(userId)!
+  
+  try {
+    // Check if we're using mock mode (no API key)
+    if (!import.meta.env.VITE_ANTHROPIC_API_KEY) {
+      // Return mock response for development
+      return getMockResponse(message, user)
+    }
+    
+    // Add personalization to the message if we have user info
+    const personalizedMessage = user?.first_name 
+      ? `[User: ${user.first_name}] ${message}`
+      : message
+    
+    // Call Anthropic API
+    const response = await sendToAnthropic(personalizedMessage, history)
+    
+    // Update conversation history
+    history.push({ role: 'user', content: message })
+    history.push({ role: 'assistant', content: response })
+    
+    // Keep only last 10 exchanges to avoid token limits
+    if (history.length > 20) {
+      conversationHistories.set(userId, history.slice(-20))
+    }
+    
+    return response
+  } catch (error) {
+    console.error('Error in sendMessageToCBOBro:', error)
+    
+    // Fallback to mock response on error
+    return getMockResponse(message, user)
+  }
+}
+
+// Mock responses for development/fallback
+function getMockResponse(message: string, user?: User): string {
   const lowerMessage = message.toLowerCase()
 
   if (lowerMessage.includes('help') || lowerMessage.includes('what can you do')) {
@@ -108,5 +152,14 @@ export class CBOBroMCPClient {
   async disconnect() {
     // TODO: Implement MCP disconnection
     console.log('MCP disconnection stub')
+  }
+}
+
+// Export function to clear conversation history (useful for reset)
+export function clearConversationHistory(userId?: number) {
+  if (userId) {
+    conversationHistories.delete(userId)
+  } else {
+    conversationHistories.clear()
   }
 }
