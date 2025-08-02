@@ -113,7 +113,7 @@ export default function MessageInput({ onSendMessage, isLoading }: MessageInputP
                 setMessage(prompt)
                 inputRef.current?.focus()
               }}
-              className="text-xs px-3 py-1.5 rounded-full bg-[var(--cbo-bg-secondary)] text-[var(--cbo-text-secondary)] hover:bg-[var(--cbo-bg-tertiary)] hover:text-[var(--cbo-primary)] transition-all border border-[var(--cbo-border)]"
+              className="quick-action"
             >
               {prompt}
             </button>

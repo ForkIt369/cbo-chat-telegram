@@ -41,18 +41,17 @@ function App() {
         tg.ready()
         tg.expand()
         
-        // Set theme colors
+        // Set theme colors - but preserve our green theme
         if (tg.themeParams) {
           const theme = tg.themeParams
           log('Theme params:', theme)
           
+          // Only update Telegram theme variables, not CBO theme
           if (theme.bg_color) {
             document.documentElement.style.setProperty('--tg-theme-bg-color', theme.bg_color)
-            document.documentElement.style.setProperty('--cbo-bg-dark', theme.bg_color)
           }
           if (theme.text_color) {
             document.documentElement.style.setProperty('--tg-theme-text-color', theme.text_color)
-            document.documentElement.style.setProperty('--cbo-text-primary', theme.text_color)
           }
         }
         

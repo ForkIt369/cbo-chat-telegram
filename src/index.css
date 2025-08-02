@@ -3,18 +3,18 @@
 @tailwind utilities;
 
 :root {
-  /* CBO Green Theme */
-  --cbo-primary: #30D158;
-  --cbo-primary-dark: #28A745;
-  --cbo-primary-light: #4ADE80;
-  --cbo-bg-dark: #0A0E0A;
-  --cbo-bg-secondary: #111511;
-  --cbo-bg-tertiary: #1A1F1A;
-  --cbo-text-primary: #E5E7E5;
-  --cbo-text-secondary: #A8B2A8;
-  --cbo-text-muted: #6B7C6B;
-  --cbo-border: #2A352A;
-  --cbo-shadow: rgba(48, 209, 88, 0.1);
+  /* CBO Green Theme - Force these values */
+  --cbo-primary: #30D158 !important;
+  --cbo-primary-dark: #28A745 !important;
+  --cbo-primary-light: #4ADE80 !important;
+  --cbo-bg-dark: #0A0E0A !important;
+  --cbo-bg-secondary: #111511 !important;
+  --cbo-bg-tertiary: #1A1F1A !important;
+  --cbo-text-primary: #E5E7E5 !important;
+  --cbo-text-secondary: #A8B2A8 !important;
+  --cbo-text-muted: #6B7C6B !important;
+  --cbo-border: #2A352A !important;
+  --cbo-shadow: rgba(48, 209, 88, 0.1) !important;
   
   /* Telegram theme variables */
   --tg-theme-bg-color: var(--cbo-bg-dark);
@@ -128,8 +128,64 @@ body {
 
 /* Glass effect */
 .glass {
-  background: rgba(26, 31, 26, 0.7);
+  background: rgba(26, 31, 26, 0.7) !important;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--cbo-border);
+  border: 1px solid var(--cbo-border) !important;
+}
+
+/* Ensure green theme for key elements */
+.bg-\[var\(--cbo-primary\)\] {
+  background-color: #30D158 !important;
+}
+
+.text-\[var\(--cbo-primary\)\] {
+  color: #30D158 !important;
+}
+
+.bg-\[\#0A0E0A\] {
+  background-color: #0A0E0A !important;
+}
+
+.text-\[\#E5E7E5\] {
+  color: #E5E7E5 !important;
+}
+
+/* Message bubbles */
+.message-user {
+  background-color: #30D158 !important;
+  color: #000000 !important;
+}
+
+.message-bot {
+  background: rgba(26, 31, 26, 0.7) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid #2A352A !important;
+  color: #E5E7E5 !important;
+}
+
+/* Header styling */
+header {
+  background: rgba(26, 31, 26, 0.9) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #2A352A !important;
+}
+
+/* Quick action buttons */
+.quick-action {
+  background: rgba(48, 209, 88, 0.1) !important;
+  border: 1px solid #30D158 !important;
+  color: #30D158 !important;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.quick-action:hover {
+  background: rgba(48, 209, 88, 0.2) !important;
+  transform: translateY(-1px);
 }
