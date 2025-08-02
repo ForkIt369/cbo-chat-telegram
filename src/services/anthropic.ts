@@ -1,5 +1,3 @@
-import { Message } from './cbo-bro'
-
 const ANTHROPIC_API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages'
 const MODEL = 'claude-sonnet-4-20250514'
