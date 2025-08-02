@@ -91,29 +91,37 @@ export default function ChatInterface() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-telegram-bg">
-      <header className="bg-telegram-secondary-bg px-4 py-3 shadow-sm">
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-lg font-semibold text-telegram-text">CBO Bro Chat</h1>
-            <p className="text-xs text-telegram-hint">Business optimization at your fingertips</p>
+    <div className="flex flex-col h-full w-full bg-[var(--cbo-bg-dark)]">
+      {/* Header */}
+      <header className="glass px-5 py-4 border-b border-[var(--cbo-border)]">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--cbo-primary)] to-[var(--cbo-primary-dark)] flex items-center justify-center shadow-lg">
+              <span className="text-black font-bold text-sm">CBO</span>
+            </div>
+            <div>
+              <h1 className="text-base font-semibold text-[var(--cbo-text-primary)]">CBO Bro</h1>
+              <p className="text-xs text-[var(--cbo-text-secondary)]">Your business optimization AI</p>
+            </div>
           </div>
           {userInsights && (
-            <div className="text-right">
-              <p className="text-xs text-telegram-hint">
-                {userInsights.activeInsights} active insights
-              </p>
-              <p className="text-xs text-telegram-accent">
-                {userInsights.completedChallenges} resolved
-              </p>
+            <div className="flex items-center space-x-2">
+              <div className="text-right">
+                <p className="text-xs text-[var(--cbo-text-secondary)]">Active insights</p>
+                <p className="text-sm font-semibold text-[var(--cbo-primary)]">{userInsights.activeInsights}</p>
+              </div>
             </div>
           )}
         </div>
       </header>
       
-      <MessageList messages={messages} />
-      <div ref={messagesEndRef} />
+      {/* Messages Area */}
+      <div className="flex-1 overflow-hidden">
+        <MessageList messages={messages} />
+        <div ref={messagesEndRef} />
+      </div>
       
+      {/* Input Area */}
       <MessageInput 
         onSendMessage={handleSendMessage}
         isLoading={isLoading}
